@@ -1,6 +1,8 @@
 package com.example.practice.controller;
 
 import com.example.practice.entity.Student;
+import com.example.practice.service.StudentService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -10,61 +12,36 @@ import java.util.List;
 @RestController
 @RequestMapping("/students")
 public class StudentController {
-    List<Student> students=new ArrayList<>();
+
+    @Autowired
+    private StudentService studentService;
 
     @GetMapping
     public List<Student> getAllStudent()
     {
-        return students;
+        return studentService.getAllStudent();
     }
 
     @PostMapping
-    public void createStudent(@RequestBody Student student)
+    public Student createStudent(@RequestBody Student student)
     {
-        students.add(student);
+        return studentService.createStudent(student);
     }
     @GetMapping("/{id}")
     public Student getStudentById(@PathVariable int id)
     {
-        for(Student s: students)
-        {
-            if(s.getId()==id)
-            {
-                return s;
-            }
-        }
-        return null;
+       return studentService.getStudentById(id);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteById(@PathVariable int id)
+    public void deleteById(@PathVariable int id)
     {
-        Iterator<Student> iterator=students.iterator();
-
-        while(iterator.hasNext())
-        {
-            Student s=iterator.next();
-            if(s.getId()==id)
-            {
-                students.remove(s);
-                return "Student deleted";
-            }
-        }
-        return "Student not found";
+       studentService.deleteStudent(id);
     }
 
     @PutMapping("/{id}")
     public Student updateStudent(@PathVariable int id,@RequestBody Student updatedStudent)
     {
-        for(Student s:students)
-        {
-            if(s.getId()==id)
-            {
-                s.setEmail(updatedStudent.getEmail());
-                s.setName(updatedStudent.getName());
-                return s;
-            }
-        }
-        return null;
+        return studentService.updateStudent(id,updatedStudent);
     }
 }
