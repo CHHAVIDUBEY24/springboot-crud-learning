@@ -1,6 +1,8 @@
 package com.example.practice.service;
 
 import com.example.practice.entity.Student;
+import com.example.practice.repository.StudentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -8,49 +10,41 @@ import java.util.List;
 
 @Service
 public class StudentService {
-    List<Student> students=new ArrayList<>();
+    @Autowired
+    private StudentRepository studentRepository;
 
     //create
     public Student createStudent(Student s)
     {
-        students.add(s);
+        studentRepository.save(s);
         return s;
     }
     //read
     public List<Student> getAllStudent()
     {
-        return students;
+        return studentRepository.findAll()  ;
     }
 
     //read-> id
     public Student getStudentById(int id)
     {
-        for(Student s:students)
-        {
-            if(s.getId()==id)
-            {
-                return s;
-            }
-        }
-        return null;
+        return studentRepository.findById(id).orElse(null);
     }
 
     //update
     public Student updateStudent(int id,Student us)
     {
-        for(Student s:students)
+        Student student=studentRepository.findById(id).orElse(null);
+        if(student!=null)
         {
-            if(s.getId()==id)
-            {
-                s.setName(us.getName());
-                s.setEmail(us.getEmail());
-                return s;
-            }
+            student.setEmail(us.getEmail());
+            student.setName(us.getName());
+            return student;
         }
         return null;
     }
     public void deleteStudent(int id)
     {
-        students.removeIf(s->s.getId()==id);
+        studentRepository.deleteById(id);
     }
 }
